@@ -4,7 +4,7 @@ A decoupled, self-healing **quality governance and discovery engine** for AI cod
 
 The library ships:
 
-- **19 skills** covering discovery, planning, TDD, review, security, and orchestration
+- **21 skills** covering discovery, planning, TDD, review, security, data safety, and orchestration
 - A **quality-gates compiler** that writes host-specific GitHub Actions and Cursor rules from discovered commands
 - An **architectural learning** loop that appends invariants to local `agents.md` / `AGENTS.md`
 
@@ -123,7 +123,7 @@ Governance: `agent_override_allowed` is false. Blocking gates that resolve to a 
 | `verification-loop` | Runs host build / typecheck / lint / tests before claiming done. |
 | `build-repair` | Incremental compile and type fixes without deleting checks or adding blanket `any`. |
 
-**Full catalog (19):** `repo-discovery`, `intent-and-spec`, `design-and-plan`, `implement-phased`, `tdd-workflow`, `bugfix-pipeline`, `verification-loop`, `build-repair`, `code-review`, `coding-conventions`, `data-flow-audit`, `security-safety`, `cross-cutting-api`, `refactoring-safety`, `context-management`, `research-and-docs`, `git-and-issues`, `orchestration`, `quality-gates`.
+**Full catalog (21):** `repo-discovery`, `intent-and-spec`, `design-and-plan`, `implement-phased`, `tdd-workflow`, `bugfix-pipeline`, `verification-loop`, `build-repair`, `code-review`, `coding-conventions`, `data-flow-audit`, `database-migrations`, `security-safety`, `cross-cutting-api`, `refactoring-safety`, `context-management`, `research-and-docs`, `git-and-issues`, `orchestration`, `quality-gates`, `brownfield-architecture-mapping`.
 
 `orchestration` classifies work (feature / tweak / defect / refactor / MVP) and delegates to the others.
 
