@@ -1,0 +1,54 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "version": "1.0.0",
+  "name": "enterprise-quality-governance",
+  "governance": {
+    "agent_override_allowed": false,
+    "require_human_bypass_approval": true
+  },
+  "gates": [
+    {
+      "id": "secret-pii-leak-scan",
+      "name": "Secret & PII Leak Scan",
+      "command": "gitleaks detect --source .",
+      "blocking": true
+    },
+    {
+      "id": "linting-architecture",
+      "name": "Linting & Architecture",
+      "command": "npm run lint",
+      "blocking": true
+    },
+    {
+      "id": "type-safety",
+      "name": "Type Safety",
+      "command": "npm run typecheck",
+      "blocking": true
+    },
+    {
+      "id": "unit-testing-suite",
+      "name": "Unit Testing Suite",
+      "command": "npm run test:unit",
+      "blocking": true
+    },
+    {
+      "id": "code-coverage-threshold",
+      "name": "Code Coverage Threshold",
+      "command": "npm run test:coverage",
+      "minimum": 80,
+      "blocking": true
+    },
+    {
+      "id": "production-build-compilation",
+      "name": "Production Build Compilation",
+      "command": "npm run build",
+      "blocking": true
+    },
+    {
+      "id": "integration-e2e-validation",
+      "name": "Integration & E2E Validation",
+      "command": "npm run test:e2e",
+      "blocking": false
+    }
+  ]
+}

@@ -1,0 +1,79 @@
+---
+description: Mandatory compiled quality gates. Agents cannot override blocking gates or recommend commit/push when they fail.
+globs:
+  - "**/*"
+alwaysApply: true
+---
+
+# Compiled Quality Gates (Agent Runtime)
+
+This file is GENERATED from `quality-gates.spec.json` (`enterprise-quality-governance` 1.0.0).
+Do not edit by hand. Recompile with `node compile-gates.js`.
+
+## Governance
+
+- `agent_override_allowed`: **false**
+- `require_human_bypass_approval`: **true**
+
+Agents MUST NOT:
+
+- Skip, weaken, comment out, or wrap blocking gates with `|| true`, `--no-verify`, or equivalent.
+- Suggest `git commit`, `git push`, or opening a merge-ready PR while any **blocking** gate is failing or unverified.
+- Claim a bypass. Only a human can approve a bypass, and only when `require_human_bypass_approval` is honored outside this agent.
+
+If a blocking gate fails: stop. Report the command, the error, and the fix. Do not continue to commit staging that implies green gates.
+
+
+## Required gates
+
+1. **Secret & PII Leak Scan**
+   - id: `secret-pii-leak-scan`
+   - command: `gitleaks detect --staged`
+   - BLOCKING — failure is a hard stop
+
+2. **Linting & Architecture**
+   - id: `linting-architecture`
+   - command: `npm run lint`
+   - BLOCKING — failure is a hard stop
+
+3. **Type Safety**
+   - id: `type-safety`
+   - command: `npm run typecheck`
+   - BLOCKING — failure is a hard stop
+
+4. **Unit Testing Suite**
+   - id: `unit-testing-suite`
+   - command: `npm run test:unit`
+   - BLOCKING — failure is a hard stop
+
+5. **Code Coverage Threshold**
+   - id: `code-coverage-threshold`
+   - command: `npm run test:coverage`
+   - Threshold: minimum 80%
+   - BLOCKING — failure is a hard stop
+
+6. **Production Build Compilation**
+   - id: `production-build-compilation`
+   - command: `npm run build`
+   - BLOCKING — failure is a hard stop
+
+7. **Integration & E2E Validation**
+   - id: `integration-e2e-validation`
+   - command: `npm run test:e2e`
+   - non-blocking — report failure, do not treat as optional skip of later required work
+
+## Blocking commands (hard stop)
+
+- `gitleaks detect --staged`
+- `npm run lint`
+- `npm run typecheck`
+- `npm run test:unit`
+- `npm run test:coverage`
+- `npm run build`
+
+## Agent execution order
+
+1. Run each gate command from the repository root (or the package the change belongs to if the host is a documented workspace).
+2. If a blocking command is missing on the host, do not invent a substitute that lowers the bar. Report the gap and stop before commit.
+3. Non-blocking gates still run. Record pass/fail. Their failure does not authorize skipping blocking gates.
+4. After all blocking gates pass, compiled artifacts may be staged with `git add .github/workflows/compiled-quality-gates.yml .cursor/rules/quality-gates.mdc`.

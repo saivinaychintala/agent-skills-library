@@ -1,0 +1,46 @@
+# GENERATED FILE. Do not edit by hand.
+# Source: enterprise-quality-governance@1.0.0
+# Recompile with: node <agent-skills-library>/quality-gates/compile-gates.js
+
+name: Compiled Quality Gates
+on:
+  push:
+  pull_request:
+jobs:
+  run-governance-gates:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Install dependencies
+        run: npm ci
+      - name: "Secret & PII Leak Scan"
+        id: secret-pii-leak-scan
+        run: "gitleaks detect --staged"
+      - name: "Linting & Architecture"
+        id: linting-architecture
+        run: "npm run lint"
+      - name: "Type Safety"
+        id: type-safety
+        run: "npm run typecheck"
+      - name: "Unit Testing Suite"
+        id: unit-testing-suite
+        run: "npm run test:unit"
+      - name: "Code Coverage Threshold"
+        id: code-coverage-threshold
+        env:
+          COVERAGE_MINIMUM: 80
+        run: "npm run test:coverage"
+      - name: "Production Build Compilation"
+        id: production-build-compilation
+        run: "npm run build"
+      - name: "Integration & E2E Validation"
+        id: integration-e2e-validation
+        run: "npm run test:e2e"
+        continue-on-error: true
